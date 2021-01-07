@@ -238,6 +238,41 @@ def test_addCustomer_requiredFieldValidation(mockInsert, mock_request_data, clie
     
     assertFieldRequiredException("weight", response=response)
 
+@patch('controllers.customer.Customer.insert')
+def test_addCustomer_fieldTypeValidation(mockInsert, mock_request_data, client):
+    mockInsert.return_value = mock_request_data.copy()
+    base_request_data = mock_request_data.copy()
+    del base_request_data['id']
+    del base_request_data['addresses']
+
+    request_data = base_request_data.copy()
+    request_data['age'] = "Twelve"
+
+    response = client.post('/customers/', json=request_data)
+    
+    assertTypeValidationException("age", "integer", response=response)
+
+    request_data = base_request_data.copy()
+    request_data['married'] = "married"
+
+    response = client.post('/customers/', json=request_data)
+    
+    assertTypeValidationException("married", "bool", response=response)
+
+    request_data = base_request_data.copy()
+    request_data['height'] = "OneEighty"
+
+    response = client.post('/customers/', json=request_data)
+    
+    assertTypeValidationException("height", "float", response=response)
+
+    request_data = base_request_data.copy()
+    request_data['weight'] = "NinetyTwo"
+
+    response = client.post('/customers/', json=request_data)
+    
+    assertTypeValidationException("weight", "float", response=response)
+
 
 def assertFieldRequiredException(fieldName, client = None, response = None):
     if response is None:
