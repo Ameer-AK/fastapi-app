@@ -47,20 +47,20 @@ def test_getAllCustomers_withQuery_typeValidation(mockGetAll, client):
     mockGetAll.return_value = []
 
     response = client.get('/customers/?age=Twelve')
-
-    assertQueryTypeValidationException(response, "age", "integer")
+    
+    assertTypeValidationException("age", "integer", response=response)
 
     response = client.get('/customers/?married=test')
 
-    assertQueryTypeValidationException(response, "married", "bool")
+    assertTypeValidationException("married", "bool", response=response)
 
     response = client.get('/customers/?height=Three')
 
-    assertQueryTypeValidationException(response, "height", "float")
+    assertTypeValidationException("height", "float", response=response)
 
     response = client.get('/customers/?weight=Four')
 
-    assertQueryTypeValidationException(response, "weight", "float")
+    assertTypeValidationException("weight", "float", response=response)
 
 
 @patch('controllers.customer.Customer.get')
@@ -115,37 +115,37 @@ def test_getCustomer_requiredFieldValidation(mockGet, mock_request_data, client)
 
     del mockGet.return_value['id']
 
-    assertBodyFieldRequiredException('id', client)
+    assertFieldRequiredException('id', client=client)
 
     mockGet.return_value['id'] = UUID('47dd46aa-2668-4fe6-a8db-e6a47dd63cde')
     del mockGet.return_value['first_name']
 
-    assertBodyFieldRequiredException('first_name', client)
+    assertFieldRequiredException('first_name', client=client)
 
     mockGet.return_value['first_name'] = "first name"
     del mockGet.return_value['last_name']
 
-    assertBodyFieldRequiredException('last_name', client)
+    assertFieldRequiredException('last_name', client=client)
 
     mockGet.return_value['last_name'] = "last name"
     del mockGet.return_value['married']
 
-    assertBodyFieldRequiredException('married', client)
+    assertFieldRequiredException('married', client=client)
 
     mockGet.return_value['married'] = True
     del mockGet.return_value['age']
 
-    assertBodyFieldRequiredException('age', client)
+    assertFieldRequiredException('age', client=client)
     
     mockGet.return_value['age'] = 50
     del mockGet.return_value['height']
 
-    assertBodyFieldRequiredException('height', client)
+    assertFieldRequiredException('height', client=client)
 
     mockGet.return_value['height'] = 190
     del mockGet.return_value['weight']
 
-    assertBodyFieldRequiredException('weight', client)
+    assertFieldRequiredException('weight', client=client)
 
 
 @patch('controllers.customer.Customer.get')
@@ -154,32 +154,32 @@ def test_getCustomer_feildTypeValidation(mockGet, mock_request_data, client):
 
     mockGet.return_value['id'] = 123
 
-    assertBodyTypeValidationException("id", "uuid", client)
+    assertTypeValidationException("id", "uuid", client=client)
 
     mockGet.return_value['id'] = UUID("47dd46aa-2668-4fe6-a8db-e6a47dd63cde")
     mockGet.return_value['married'] = "married"
 
-    assertBodyTypeValidationException("married", "bool", client)
+    assertTypeValidationException("married", "bool", client=client)
 
     mockGet.return_value['married'] = True
     mockGet.return_value['age'] = "Fifty"
 
-    assertBodyTypeValidationException("age", "integer", client)
+    assertTypeValidationException("age", "integer", client=client)
 
     mockGet.return_value['age'] = 50
     mockGet.return_value['height'] = "OneEighty"
 
-    assertBodyTypeValidationException("height", "float", client)
+    assertTypeValidationException("height", "float", client=client)
 
     mockGet.return_value['height'] = 180.5
     mockGet.return_value['weight'] = "Eighty"
 
-    assertBodyTypeValidationException("weight", "float", client)
+    assertTypeValidationException("weight", "float", client=client)
 
     mockGet.return_value['weight'] = 80.8
     mockGet.return_value['addresses'] = "List"
 
-    assertBodyTypeValidationException("addresses", "list", client)
+    assertTypeValidationException("addresses", "list", client=client)
 
 
 @patch('controllers.customer.Customer.insert')
@@ -203,32 +203,32 @@ def test_addCustomer_requiredFieldValidation(mockInsert, mock_request_data, clie
     del request_data['id']
     del request_data['addresses']
 
-    # del request_data
+    del request_data['first_name']
 
     response = client.post('/customers/', json=request_data)
 
-    
-
-def assertQueryTypeValidationException(response, fieldName, fieldType):
-    error = response.json()['detail'][0]
-
-    assert error['loc'] == ['query', fieldName]
-    assert error['type'] == f'type_error.{fieldType}'
+    assertFieldRequiredException("first_name", response=response)
 
 
-def assertBodyFieldRequiredException(fieldName, client):
-    with pytest.raises(ValidationError) as e:
-        response = client.get('/customers/47dd46aa-2668-4fe6-a8db-e6a47dd63cde')
-    error = e.value.errors()[0]
+def assertFieldRequiredException(fieldName, client = None, response = None):
+    if response is None:
+        with pytest.raises(ValidationError) as e:
+            response = client.get('/customers/47dd46aa-2668-4fe6-a8db-e6a47dd63cde')
+        error = e.value.errors()[0]
+    else:
+        error = response.json()['detail'][0]
 
-    assert error["loc"] == ("response", fieldName)
+    assert error["loc"][1] == fieldName
     assert error["type"] == "value_error.missing"
 
 
-def assertBodyTypeValidationException(fieldName, fieldType, client):
-    with pytest.raises(ValidationError) as e:
-        response = client.get('/customers/47dd46aa-2668-4fe6-a8db-e6a47dd63cde')
-    error = e.value.errors()[0]
+def assertTypeValidationException(fieldName, fieldType, client = None, response = None):
+    if response is None:
+        with pytest.raises(ValidationError) as e:
+            response = client.get('/customers/47dd46aa-2668-4fe6-a8db-e6a47dd63cde')
+        error = e.value.errors()[0]
+    else:
+        error = response.json()['detail'][0]
     
-    assert error["loc"] == ("response", fieldName)
+    assert error["loc"][1] == fieldName
     assert error["type"] == f"type_error.{fieldType}"
