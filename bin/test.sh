@@ -2,4 +2,4 @@
 
 cd test
 
-pytest -s --color=yes -vv
+pytest -s --color=yes -v -rA

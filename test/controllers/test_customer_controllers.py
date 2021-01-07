@@ -199,15 +199,44 @@ def test_addCustomer(mockInsert, mock_request_data, client):
 @patch('controllers.customer.Customer.insert')
 def test_addCustomer_requiredFieldValidation(mockInsert, mock_request_data, client):
     mockInsert.return_value = mock_request_data.copy()
-    request_data = mock_request_data.copy()
-    del request_data['id']
-    del request_data['addresses']
+    base_request_data = mock_request_data.copy()
+    del base_request_data['id']
+    del base_request_data['addresses']
 
+    request_data = base_request_data.copy()
     del request_data['first_name']
 
     response = client.post('/customers/', json=request_data)
 
     assertFieldRequiredException("first_name", response=response)
+
+    request_data = base_request_data.copy()
+    del request_data['last_name']
+
+    response = client.post('/customers/', json=request_data)
+
+    assertFieldRequiredException("last_name", response=response)
+
+    request_data = base_request_data.copy()
+    del request_data['age']
+
+    response = client.post('/customers/', json=request_data)
+    
+    assertFieldRequiredException("age", response=response)
+
+    request_data = base_request_data.copy()
+    del request_data['height']
+
+    response = client.post('/customers/', json=request_data)
+    
+    assertFieldRequiredException("height", response=response)
+
+    request_data = base_request_data.copy()
+    del request_data['weight']
+
+    response = client.post('/customers/', json=request_data)
+    
+    assertFieldRequiredException("weight", response=response)
 
 
 def assertFieldRequiredException(fieldName, client = None, response = None):
