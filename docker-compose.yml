@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:12
+    restart: always
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: mydb
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - 54321:5432
+  fastapi-app:
+    image: fastapi-app
+    container_name: fastapi-app
+    build: 
+      context: .
+      args:
+        - EXTRA_REQUIREMENTS=requirements.txt
+    environment:
+      DB_USERNAME: dev
+      DB_PASSWORD: dev
+      DB_HOSTNAME: postgres
+      DB_PORT: 5432
+      DB_NAME: mydb
+    depends_on: 
+      - postgres
+    ports:
+      - 8000:8000
+    volumes:
+      - ./${PWD}:/app
+    command: bin/boot.sh
+  fastapi-app-test:
+    image: fastapi-app-test
+    container_name: fastapi-app-test
+    build:
+      context: .
+      args:
+        - EXTRA_REQUIREMENTS=test-requirements.txt
+    environment:
+      DB_USERNAME: dev
+      DB_PASSWORD: dev
+      DB_HOSTNAME: postgres
+      DB_PORT: 5432
+      DB_NAME: mydb
+    volumes:
+      - ./${PWD}:/app
+    depends_on: 
+      - fastapi-app
+    command: bin/test.sh
+    
+volumes:
+  db_data:
