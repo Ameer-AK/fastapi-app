@@ -7,7 +7,7 @@ from uuid import UUID
 from pydantic import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 
-from test.controllers.conftest import assertFieldRequiredException, assertTypeValidationException
+from test.conftest import assertFieldRequiredException, assertTypeValidationException
 
 
 @patch("controllers.address.Address.getAll")
@@ -167,5 +167,27 @@ def test_updateAddress_nonExistent(mockUpdate, mock_address_request_data, client
     response = client.patch(f'/addresses/{mock_address_request_data["id"]}', json={})
 
     mockUpdate.assert_called_with(UUID(mock_address_request_data['id']))
+    assert response.json()['detail'] == f"Address with id: {mock_address_request_data['id']} not found"
+    assert response.status_code == 404
+
+
+@patch("controllers.address.Address.delete")
+def test_deleteAddress(mockDelete, mock_address_request_data, client):
+    mockDelete.return_value = mock_address_request_data.copy()
+
+    response = client.delete(f"/addresses/{mock_address_request_data['id']}")
+
+    mockDelete.assert_called_with(UUID(mock_address_request_data['id']))
+    assert response.json() == mock_address_request_data
+    assert response.status_code == 200
+
+
+@patch("controllers.address.Address.delete")
+def test_deleteAddress_nonExistent(mockDelete, mock_address_request_data, client):
+    mockDelete.side_effect = NoResultFound()
+
+    response = client.delete(f"/addresses/{mock_address_request_data['id']}")
+
+    mockDelete.assert_called_with(UUID(mock_address_request_data['id']))
     assert response.json()['detail'] == f"Address with id: {mock_address_request_data['id']} not found"
     assert response.status_code == 404

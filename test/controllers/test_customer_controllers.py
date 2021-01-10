@@ -6,7 +6,7 @@ from unittest.mock import patch
 from uuid import UUID
 from pydantic import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
-from test.controllers.conftest import assertFieldRequiredException, assertTypeValidationException
+from test.conftest import assertFieldRequiredException, assertTypeValidationException
 
 
 @patch('controllers.customer.Customer.getAll')
