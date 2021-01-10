@@ -102,3 +102,44 @@ def test_getAddress_fieldTypeValidation(mockGet, mock_address_request_data, clie
     mockGet.return_value['customer_id'] = 123
 
     assertTypeValidationException("customer_id", "uuid", route="addresses", client=client)
+
+
+@patch("controllers.address.Address.insert")
+def test_addAddress(mockInsert, mock_address_request_data, client):
+    mockInsert.return_value = mock_address_request_data.copy()
+    request_data = mock_address_request_data.copy()
+    del request_data['id']
+
+    response = client.post('/addresses/', json=request_data)
+
+    request_data['customer_id'] = UUID(request_data['customer_id'])
+
+    mockInsert.assert_called_with(**request_data)
+    assert response.json() == mock_address_request_data
+    assert response.status_code == 201
+
+
+def test_addAddress_requiredFieldValidation(mock_address_request_data, client):
+    base_request_data = mock_address_request_data.copy()
+    del base_request_data['id']
+
+    request_data = base_request_data.copy()
+    del request_data['customer_id']
+
+    response = client.post('/addresses/', json=request_data)
+
+    assertFieldRequiredException("customer_id", response=response)
+
+    request_data = base_request_data.copy()
+    del request_data['city']
+
+    response = client.post('/addresses/', json=request_data)
+
+    assertFieldRequiredException("city", response=response)
+
+    request_data = base_request_data.copy()
+    del request_data['country']
+
+    response = client.post('/addresses/', json=request_data)
+
+    assertFieldRequiredException("country", response=response)

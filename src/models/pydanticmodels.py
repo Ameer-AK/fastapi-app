@@ -15,7 +15,7 @@ class AddressInPatch(BaseModel):
     country: Optional[str] = None
 
 class AddressOutEmbedded(BaseModel):
-    id: UUID = uuid4()
+    id: UUID
     street: Optional[str] = None
     city: str
     country: str
