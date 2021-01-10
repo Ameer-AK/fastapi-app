@@ -21,7 +21,7 @@ class AddressOutEmbedded(BaseModel):
     country: str
 
 class AddressOut(BaseModel):
-    id: UUID = uuid4()
+    id: UUID
     customer_id: UUID
     street: Optional[str] = None
     city: str

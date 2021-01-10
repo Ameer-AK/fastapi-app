@@ -43,3 +43,62 @@ def test_getAllAddresses_withQuery_typeValidation(client):
     
     assertTypeValidationException("customer_id", "uuid", response=response)
     
+
+@patch("controllers.address.Address.get")
+def test_getAddress(mockGet, mock_address_request_data, client):
+    mockGet.return_value = mock_address_request_data.copy()
+
+    response = client.get('/addresses/77e2c1f3-68f8-483b-bc30-fef0b1fe0d2a')
+
+    mockGet.assert_called_with(id=UUID("77e2c1f3-68f8-483b-bc30-fef0b1fe0d2a"))
+    assert response.json() == mock_address_request_data
+    assert response.status_code == 200
+
+
+@patch("controllers.address.Address.get")
+def test_getAddress_nonExistent(mockGet, mock_address_request_data, client):
+    mockGet.side_effect = NoResultFound()
+
+    response = client.get('/addresses/77e2c1f3-68f8-483b-bc30-fef0b1fe0d2a')
+
+    mockGet.assert_called_with(id=UUID("77e2c1f3-68f8-483b-bc30-fef0b1fe0d2a"))
+    assert response.json() == {'detail': 'Address with id: 77e2c1f3-68f8-483b-bc30-fef0b1fe0d2a not found'}
+    assert response.status_code == 404
+
+
+@patch("controllers.address.Address.get")
+def test_getAddress_requiredFieldValidation(mockGet, mock_address_request_data, client):
+    mockGet.return_value = mock_address_request_data.copy()
+
+    del mockGet.return_value['id']
+
+    assertFieldRequiredException('id', route='addresses', client=client)
+
+    mockGet.return_value['id'] = mock_address_request_data['id']
+    del mockGet.return_value['customer_id']
+
+    assertFieldRequiredException('customer_id', route='addresses', client=client)
+
+    mockGet.return_value['customer_id'] = mock_address_request_data['customer_id']
+    del mockGet.return_value['city']
+
+    assertFieldRequiredException('city', route='addresses', client=client)
+
+    mockGet.return_value['city'] = mock_address_request_data['city']
+    del mockGet.return_value['country']
+
+    assertFieldRequiredException('country', route='addresses', client=client)
+
+
+@patch("controllers.address.Address.get")
+def test_getAddress_fieldTypeValidation(mockGet, mock_address_request_data, client):
+    mockGet.return_value = mock_address_request_data.copy()
+
+    mockGet.return_value['id'] = 123
+
+    assertTypeValidationException("id", "uuid", route="addresses", client=client)
+
+    mockGet.return_value['id'] = UUID(mock_address_request_data['id'])
+    mockGet.return_value['customer_id'] = 123
+
+    assertTypeValidationException("customer_id", "uuid", route="addresses", client=client)

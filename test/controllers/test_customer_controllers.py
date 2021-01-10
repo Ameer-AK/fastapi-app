@@ -114,32 +114,32 @@ def test_getCustomer_requiredFieldValidation(mockGet, mock_customer_request_data
 
     assertFieldRequiredException('id', route = 'customers', client=client)
 
-    mockGet.return_value['id'] = UUID('47dd46aa-2668-4fe6-a8db-e6a47dd63cde')
+    mockGet.return_value['id'] = UUID(mock_customer_request_data['id'])
     del mockGet.return_value['first_name']
 
     assertFieldRequiredException('first_name', route = 'customers', client=client)
 
-    mockGet.return_value['first_name'] = "first name"
+    mockGet.return_value['first_name'] = mock_customer_request_data['first_name']
     del mockGet.return_value['last_name']
 
     assertFieldRequiredException('last_name', route = 'customers', client=client)
 
-    mockGet.return_value['last_name'] = "last name"
+    mockGet.return_value['last_name'] = mock_customer_request_data['last_name']
     del mockGet.return_value['married']
 
     assertFieldRequiredException('married', route = 'customers', client=client)
 
-    mockGet.return_value['married'] = True
+    mockGet.return_value['married'] = mock_customer_request_data['married']
     del mockGet.return_value['age']
 
     assertFieldRequiredException('age', route = 'customers', client=client)
     
-    mockGet.return_value['age'] = 50
+    mockGet.return_value['age'] = mock_customer_request_data['age']
     del mockGet.return_value['height']
 
     assertFieldRequiredException('height', route = 'customers', client=client)
 
-    mockGet.return_value['height'] = 190
+    mockGet.return_value['height'] = mock_customer_request_data['height']
     del mockGet.return_value['weight']
 
     assertFieldRequiredException('weight', route = 'customers', client=client)
@@ -153,27 +153,27 @@ def test_getCustomer_feildTypeValidation(mockGet, mock_customer_request_data, cl
 
     assertTypeValidationException("id", "uuid", route = 'customers', client=client)
 
-    mockGet.return_value['id'] = UUID("47dd46aa-2668-4fe6-a8db-e6a47dd63cde")
+    mockGet.return_value['id'] = UUID(mock_customer_request_data['id'])
     mockGet.return_value['married'] = "married"
 
     assertTypeValidationException("married", "bool", route = 'customers', client=client)
 
-    mockGet.return_value['married'] = True
+    mockGet.return_value['married'] = mock_customer_request_data['married']
     mockGet.return_value['age'] = "Fifty"
 
     assertTypeValidationException("age", "integer", route = 'customers', client=client)
 
-    mockGet.return_value['age'] = 50
+    mockGet.return_value['age'] = mock_customer_request_data['age']
     mockGet.return_value['height'] = "OneEighty"
 
     assertTypeValidationException("height", "float", route = 'customers', client=client)
 
-    mockGet.return_value['height'] = 180.5
+    mockGet.return_value['height'] = mock_customer_request_data['height']
     mockGet.return_value['weight'] = "Eighty"
 
     assertTypeValidationException("weight", "float", route = 'customers', client=client)
 
-    mockGet.return_value['weight'] = 80.8
+    mockGet.return_value['weight'] = mock_customer_request_data['weight']
     mockGet.return_value['addresses'] = "List"
 
     assertTypeValidationException("addresses", "list", route = 'customers', client=client)
