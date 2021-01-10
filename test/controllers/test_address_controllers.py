@@ -143,3 +143,29 @@ def test_addAddress_requiredFieldValidation(mock_address_request_data, client):
     response = client.post('/addresses/', json=request_data)
 
     assertFieldRequiredException("country", response=response)
+
+
+@patch("controllers.address.Address.update")
+def test_updateAddress(mockUpdate, mock_address_request_data, client):
+    mockUpdate.return_value = mock_address_request_data.copy()
+
+    request_data = mock_address_request_data.copy()
+    del request_data['id']
+    del request_data['customer_id']
+
+    response = client.patch(f'/addresses/{mock_address_request_data["id"]}', json=request_data)
+
+    mockUpdate.assert_called_with(UUID(mock_address_request_data['id']), **request_data)
+    assert response.json() == mock_address_request_data
+    assert response.status_code == 200
+
+
+@patch("controllers.address.Address.update")
+def test_updateAddress_nonExistent(mockUpdate, mock_address_request_data, client):
+    mockUpdate.side_effect = NoResultFound()
+
+    response = client.patch(f'/addresses/{mock_address_request_data["id"]}', json={})
+
+    mockUpdate.assert_called_with(UUID(mock_address_request_data['id']))
+    assert response.json()['detail'] == f"Address with id: {mock_address_request_data['id']} not found"
+    assert response.status_code == 404
