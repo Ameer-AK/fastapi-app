@@ -42,10 +42,7 @@ def test_getAllCustomers_withQuery(mockGetAll, client):
     assert response.status_code == 200
 
 
-@patch('controllers.customer.Customer.getAll')
-def test_getAllCustomers_withQuery_typeValidation(mockGetAll, client):
-    mockGetAll.return_value = []
-
+def test_getAllCustomers_withQuery_typeValidation(client):
     response = client.get('/customers/?age=Twelve')
     
     assertTypeValidationException("age", "integer", response=response)
@@ -75,7 +72,7 @@ def test_getCustomer(mockGet, mock_request_data, client):
 
 
 @patch('controllers.customer.Customer.get')
-def test_getCustomer_nonExistant(mockGet, client):
+def test_getCustomer_nonExistent(mockGet, client):
     mockGet.side_effect = NoResultFound()
 
     response = client.get('/customers/47dd46aa-2668-4fe6-a8db-e6a47dd63cde')
@@ -108,6 +105,7 @@ def test_getCustomer_ageValidation(mockGet, mock_request_data, client):
     assert error["loc"] == ("response", "age")
     assert error["type"] == "value_error.number.not_gt"
     assert error["ctx"]["limit_value"] == 0
+
 
 @patch('controllers.customer.Customer.get')
 def test_getCustomer_requiredFieldValidation(mockGet, mock_request_data, client):
@@ -196,9 +194,7 @@ def test_addCustomer(mockInsert, mock_request_data, client):
     assert response.status_code == 201
 
 
-@patch('controllers.customer.Customer.insert')
-def test_addCustomer_requiredFieldValidation(mockInsert, mock_request_data, client):
-    mockInsert.return_value = mock_request_data.copy()
+def test_addCustomer_requiredFieldValidation(mock_request_data, client):
     base_request_data = mock_request_data.copy()
     del base_request_data['id']
     del base_request_data['addresses']
@@ -238,9 +234,8 @@ def test_addCustomer_requiredFieldValidation(mockInsert, mock_request_data, clie
     
     assertFieldRequiredException("weight", response=response)
 
-@patch('controllers.customer.Customer.insert')
-def test_addCustomer_fieldTypeValidation(mockInsert, mock_request_data, client):
-    mockInsert.return_value = mock_request_data.copy()
+
+def test_addCustomer_fieldTypeValidation(mock_request_data, client):
     base_request_data = mock_request_data.copy()
     del base_request_data['id']
     del base_request_data['addresses']
@@ -285,23 +280,22 @@ def test_updateCustomer(mockUpdate, mock_request_data, client):
     response = client.patch(f"/customers/{mock_request_data['id']}", json=request_data)
 
     mockUpdate.assert_called_with(UUID(mock_request_data['id']), **request_data)
-
     assert response.json() == mock_request_data
     assert response.status_code == 200
 
 
 @patch('controllers.customer.Customer.update')
-def test_updateCustomer_nonExistant(mockUpdate, mock_request_data, client):
+def test_updateCustomer_nonExistent(mockUpdate, mock_request_data, client):
     mockUpdate.side_effect = NoResultFound()
 
     response = client.patch(f"/customers/{mock_request_data['id']}", json={})
     
+    mockUpdate.assert_called_with(UUID(mock_request_data['id']))
     assert response.json()['detail'] == f"Customer with id: {mock_request_data['id']} not found"
     assert response.status_code == 404
 
 
-@patch('controllers.customer.Customer.update')
-def test_updateCustomer_typeValidation(mockUpdate, mock_request_data, client):
+def test_updateCustomer_typeValidation(mock_request_data, client):
     response = client.patch(f"/customers/{mock_request_data['id']}", json=dict(age="Twelve"))
 
     assertTypeValidationException("age", "integer", response=response)
@@ -317,6 +311,28 @@ def test_updateCustomer_typeValidation(mockUpdate, mock_request_data, client):
     response = client.patch(f"/customers/{mock_request_data['id']}", json=dict(weight="OneHundred"))
 
     assertTypeValidationException("weight", "float", response=response)
+
+
+@patch('controllers.customer.Customer.delete')
+def test_deleteCustomer(mockDelete, mock_request_data, client):
+    mockDelete.return_value = mock_request_data.copy()
+
+    response = client.delete(f"/customers/{mock_request_data['id']}")
+    
+    mockDelete.assert_called_with(UUID(mock_request_data['id']))
+    assert response.json() == mock_request_data
+    assert response.status_code == 200
+
+
+@patch('controllers.customer.Customer.delete')
+def test_deleteCustomer_nonExistent(mockDelete, mock_request_data, client):
+    mockDelete.side_effect = NoResultFound()
+
+    response = client.delete(f"/customers/{mock_request_data['id']}")
+
+    mockDelete.assert_called_with(UUID(mock_request_data['id']))
+    assert response.json()['detail'] == f"Customer with id: {mock_request_data['id']} not found"
+    assert response.status_code == 404
 
 
 def assertFieldRequiredException(fieldName, client = None, response = None):
