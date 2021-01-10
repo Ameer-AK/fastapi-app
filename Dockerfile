@@ -15,6 +15,8 @@ RUN apk add --no-cache postgresql-libs bash && \
 
 RUN pwd
 
+RUN pwd
+
 COPY requirements.txt .
 
 COPY test-requirements.txt .

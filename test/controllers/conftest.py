@@ -2,8 +2,10 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'src'))
 
 import pytest
+from uuid import UUID
 
 from fastapi.testclient import TestClient
+from pydantic import ValidationError
 
 from main import app
 
@@ -15,7 +17,7 @@ def client():
 
 
 @pytest.fixture(scope='module')
-def mock_request_data():
+def mock_customer_request_data():
     return dict(
         id="47dd46aa-2668-4fe6-a8db-e6a47dd63cde",
         first_name="first name",
@@ -27,3 +29,38 @@ def mock_request_data():
         weight=85.8,
         addresses=[]
     )
+
+
+@pytest.fixture(scope='module')
+def mock_address_request_data():
+    return dict(
+        id="77e2c1f3-68f8-483b-bc30-fef0b1fe0d2a",
+        customer_id="47dd46aa-2668-4fe6-a8db-e6a47dd63cde",
+        street="street name",
+        city="city name",
+        country="country name"
+    )
+
+
+def assertFieldRequiredException(fieldName, route = None, client = None, response = None):
+    if response is None:
+        with pytest.raises(ValidationError) as e:
+            response = client.get(f'/{route}/47dd46aa-2668-4fe6-a8db-e6a47dd63cde')
+        error = e.value.errors()[0]
+    else:
+        error = response.json()['detail'][0]
+
+    assert error["loc"][1] == fieldName
+    assert error["type"] == "value_error.missing"
+
+
+def assertTypeValidationException(fieldName, fieldType, route = None, client = None, response = None):
+    if response is None:
+        with pytest.raises(ValidationError) as e:
+            response = client.get(f'/{route}/47dd46aa-2668-4fe6-a8db-e6a47dd63cde')
+        error = e.value.errors()[0]
+    else:
+        error = response.json()['detail'][0]
+    
+    assert error["loc"][1] == fieldName
+    assert error["type"] == f"type_error.{fieldType}"
