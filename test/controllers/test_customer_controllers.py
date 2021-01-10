@@ -274,6 +274,51 @@ def test_addCustomer_fieldTypeValidation(mockInsert, mock_request_data, client):
     assertTypeValidationException("weight", "float", response=response)
 
 
+@patch('controllers.customer.Customer.update')
+def test_updateCustomer(mockUpdate, mock_request_data, client):
+    mockUpdate.return_value = mock_request_data.copy()
+
+    request_data = mock_request_data.copy()
+    del request_data['id']
+    del request_data['addresses']
+
+    response = client.patch(f"/customers/{mock_request_data['id']}", json=request_data)
+
+    mockUpdate.assert_called_with(UUID(mock_request_data['id']), **request_data)
+
+    assert response.json() == mock_request_data
+    assert response.status_code == 200
+
+
+@patch('controllers.customer.Customer.update')
+def test_updateCustomer_nonExistant(mockUpdate, mock_request_data, client):
+    mockUpdate.side_effect = NoResultFound()
+
+    response = client.patch(f"/customers/{mock_request_data['id']}", json={})
+    
+    assert response.json()['detail'] == f"Customer with id: {mock_request_data['id']} not found"
+    assert response.status_code == 404
+
+
+@patch('controllers.customer.Customer.update')
+def test_updateCustomer_typeValidation(mockUpdate, mock_request_data, client):
+    response = client.patch(f"/customers/{mock_request_data['id']}", json=dict(age="Twelve"))
+
+    assertTypeValidationException("age", "integer", response=response)
+
+    response = client.patch(f"/customers/{mock_request_data['id']}", json=dict(married="Married"))
+
+    assertTypeValidationException("married", "bool", response=response)
+
+    response = client.patch(f"/customers/{mock_request_data['id']}", json=dict(height="OneTwenty"))
+
+    assertTypeValidationException("height", "float", response=response)
+
+    response = client.patch(f"/customers/{mock_request_data['id']}", json=dict(weight="OneHundred"))
+
+    assertTypeValidationException("weight", "float", response=response)
+
+
 def assertFieldRequiredException(fieldName, client = None, response = None):
     if response is None:
         with pytest.raises(ValidationError) as e:
