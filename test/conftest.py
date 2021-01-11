@@ -40,27 +40,3 @@ def mock_address_request_data():
         city="city name",
         country="country name"
     )
-
-
-def assertFieldRequiredException(fieldName, route = None, client = None, response = None):
-    if response is None:
-        with pytest.raises(ValidationError) as e:
-            response = client.get(f'/{route}/47dd46aa-2668-4fe6-a8db-e6a47dd63cde')
-        error = e.value.errors()[0]
-    else:
-        error = response.json()['detail'][0]
-
-    assert error["loc"][1] == fieldName
-    assert error["type"] == "value_error.missing"
-
-
-def assertTypeValidationException(fieldName, fieldType, route = None, client = None, response = None):
-    if response is None:
-        with pytest.raises(ValidationError) as e:
-            response = client.get(f'/{route}/47dd46aa-2668-4fe6-a8db-e6a47dd63cde')
-        error = e.value.errors()[0]
-    else:
-        error = response.json()['detail'][0]
-    
-    assert error["loc"][1] == fieldName
-    assert error["type"] == f"type_error.{fieldType}"
