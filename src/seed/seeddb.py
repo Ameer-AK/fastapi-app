@@ -47,7 +47,7 @@ for i in range(100):
     aId1 = str(uuid4())
     aId2 = str(uuid4())
 
-    customerIn = DBCustomer(
+    customer_in = DBCustomer(
         id=cId,
         first_name= first_names[index1],
         middle_name= None,
@@ -58,7 +58,7 @@ for i in range(100):
         weight= randint(60, 150)
     )
 
-    addressIn1 = DBAddress(
+    address_in1 = DBAddress(
         id = aId1,
         customer_id = cId,
         street=streets[index1],
@@ -66,7 +66,7 @@ for i in range(100):
         country=countries[index2]
     )
 
-    addressIn2 = DBAddress(
+    address_in2 = DBAddress(
         id = aId2,
         customer_id = cId,
         street=streets[index2],
@@ -74,9 +74,9 @@ for i in range(100):
         country=countries[index1]
     )
 
-    ins1 = customer.insert().values(**customerIn.dict())
-    ins2 = address.insert().values(**addressIn1.dict())
-    ins3 = address.insert().values(**addressIn2.dict())
+    ins1 = customer.insert().values(**customer_in.dict())
+    ins2 = address.insert().values(**address_in1.dict())
+    ins3 = address.insert().values(**address_in2.dict())
     conn.execute(ins1)
     conn.execute(ins2)
     conn.execute(ins3)

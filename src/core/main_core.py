@@ -77,22 +77,22 @@ def get_customer(customer_id: UUID):
 
 
 @app.post("/customers", response_model=CustomerOut)
-def add_customer(customerIn: CustomerIn):
-    newCustomer = DBCustomer(**customerIn.dict(), id=uuid4())
+def add_customer(customer_in: CustomerIn):
+    newCustomer = DBCustomer(**customer_in.dict(), id=uuid4())
     customer.insert().values(**newCustomer.dict()).execute()
 
     return newCustomer
 
 
 @app.patch("/customers/{customer_id}", response_model=CustomerOut)
-def update_customer(customer_id: UUID, customerIn: CustomerIn):
+def update_customer(customer_id: UUID, customer_in: CustomerIn):
     currentCustomer = jsonable_encoder(customer.select().where(customer.c.id==customer_id).execute().first())
 
     if not currentCustomer:
         raise HTTPException(404, "Customer not found")
     
-    customerIn = DBCustomer(**customerIn.dict(exclude_unset=True), id=customer_id)
-    currentCustomer.update(customerIn)
+    customer_in = DBCustomer(**customer_in.dict(exclude_unset=True), id=customer_id)
+    currentCustomer.update(customer_in)
 
     currentCustomer = DBCustomer(**dict(currentCustomer))
 
@@ -124,21 +124,21 @@ def delete_customer(customer_id: UUID):
 
 
 @app.post("/addresses", response_model=AddressOut)
-def add_address(addressIn: AddressIn):
-    newAddress = DBAddress(**addressIn.dict(), id=uuid4())
+def add_address(address_in: AddressIn):
+    newAddress = DBAddress(**address_in.dict(), id=uuid4())
     address.insert().values(**newAddress.dict()).execute()
     return newAddress
 
 
 @app.patch("/adresses/{address_id}", response_model=AddressOut)
-def update_address(address_id: UUID, addressIn: AddressInPatch):
+def update_address(address_id: UUID, address_in: AddressInPatch):
     currentAddress = jsonable_encoder(address.select().where(address.c.id==address_id).execute().first())
 
     if not currentAddress:
         raise HTTPException(404, "address not found")
     
-    addressIn = DBAddress(**addressIn.dict(exclude_unset=True), id=address_id, customer_id=currentAddress["customer_id"])
-    currentAddress.update(addressIn)
+    address_in = DBAddress(**address_in.dict(exclude_unset=True), id=address_id, customer_id=currentAddress["customer_id"])
+    currentAddress.update(address_in)
 
     currentAddress = DBAddress(**dict(currentAddress))
 

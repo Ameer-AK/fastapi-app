@@ -17,8 +17,8 @@ router = APIRouter(
 )
 
 @router.get("/", response_model=List[CustomerOut], status_code=status.HTTP_200_OK)
-def get_customers(customerIn: CustomerInQuery = Depends()):
-    return Customer().get_all(**customerIn.dict())
+def get_customers(customer_in: CustomerInQuery = Depends()):
+    return Customer().get_all(**customer_in.dict())
 
 @router.get("/{customer_id}", response_model=CustomerOut, status_code=status.HTTP_200_OK)
 def get_customer(customer_id: UUID):
@@ -29,15 +29,15 @@ def get_customer(customer_id: UUID):
 
 
 @router.post("/", response_model=CustomerOut, status_code=status.HTTP_201_CREATED)
-def add_customer(customerIn: CustomerIn):
+def add_customer(customer_in: CustomerIn):
 
-    return Customer().insert(**customerIn.dict())
+    return Customer().insert(**customer_in.dict())
 
 
 @router.patch("/{customer_id}", response_model=CustomerOut, status_code=status.HTTP_200_OK)
-def update_customer(customer_id: UUID, customerIn: CustomerInPatch):
+def update_customer(customer_id: UUID, customer_in: CustomerInPatch):
     try:
-        return Customer().update(customer_id, **customerIn.dict(exclude_unset=True))
+        return Customer().update(customer_id, **customer_in.dict(exclude_unset=True))
     except NoResultFound:
         raise HTTPException(404, f"Customer with id: {customer_id} not found")
     

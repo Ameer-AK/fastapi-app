@@ -5,87 +5,87 @@ from models.base_model import BaseModel
 @patch('models.base_model.BaseModel.as_json')
 @patch('models.base_model.Session')
 def test_get_all(MockSession, mock_as_json, mock_address_request_data):
-    queryCall = MockSession.return_value.query
-    filterCall = queryCall.return_value.filter_by
+    query_call = MockSession.return_value.query
+    filter_call = query_call.return_value.filter_by
 
-    filterCall.return_value.all.return_value = [BaseModel()]
+    filter_call.return_value.all.return_value = [BaseModel()]
     mock_as_json.return_value = mock_address_request_data
 
     result = BaseModel().get_all(**mock_address_request_data)
 
-    queryCall.assert_called_with(BaseModel)
-    filterCall.assert_called_with(**mock_address_request_data)
+    query_call.assert_called_with(BaseModel)
+    filter_call.assert_called_with(**mock_address_request_data)
     assert result == [mock_address_request_data]
     
 
 @patch('models.base_model.BaseModel.as_json')
 @patch('models.base_model.Session')
 def test_get(MockSession, mock_as_json, mock_address_request_data):
-    queryCall = MockSession.return_value.query
-    filterCall = queryCall.return_value.filter_by
+    query_call = MockSession.return_value.query
+    filter_call = query_call.return_value.filter_by
 
-    filterCall.return_value.one.return_value = BaseModel()
+    filter_call.return_value.one.return_value = BaseModel()
     mock_as_json.return_value = mock_address_request_data
 
     result = BaseModel().get(123)
 
-    queryCall.assert_called_with(BaseModel)
-    filterCall.assert_called_with(id=123)
+    query_call.assert_called_with(BaseModel)
+    filter_call.assert_called_with(id=123)
     assert result == mock_address_request_data
 
 
 @patch('models.base_model.BaseModel.as_json')
 @patch('models.base_model.Session')
 def test_insert(MockSession, mock_as_json, mock_address_request_data):
-    addCall = MockSession.return_value.add
-    commitCall = MockSession.return_value.commit
+    add_call = MockSession.return_value.add
+    commit_call = MockSession.return_value.commit
     
     mock_as_json.return_value = mock_address_request_data
 
     result = BaseModel().insert()
 
-    addCall.assert_called()
-    commitCall.assert_called()
+    add_call.assert_called()
+    commit_call.assert_called()
     assert result == mock_address_request_data
 
 
 @patch('models.base_model.BaseModel.as_json')
 @patch('models.base_model.Session')
 def test_update(MockSession, mock_as_json, mock_address_request_data):
-    queryCall = MockSession.return_value.query
-    filterCall = queryCall.return_value.filter_by
-    commitCall = MockSession.return_value.commit
+    query_call = MockSession.return_value.query
+    filter_call = query_call.return_value.filter_by
+    commit_call = MockSession.return_value.commit
 
-    filterCall.return_value.one.return_value = BaseModel()
+    filter_call.return_value.one.return_value = BaseModel()
     mock_as_json.return_value = mock_address_request_data
 
     result = BaseModel().update(id=123, name="test")
 
-    queryCall.assert_called_with(BaseModel)
-    filterCall.assert_called_with(id=123)
-    commitCall.assert_called()
+    query_call.assert_called_with(BaseModel)
+    filter_call.assert_called_with(id=123)
+    commit_call.assert_called()
     assert result == mock_address_request_data
 
 
 @patch('models.base_model.BaseModel.as_json')
 @patch('models.base_model.Session')
 def test_delete(MockSession, mock_as_json, mock_address_request_data):
-    queryCall = MockSession.return_value.query
-    filterCall = queryCall.return_value.filter_by
-    commitCall = MockSession.return_value.commit
-    deleteCall = MockSession.return_value.delete
+    query_call = MockSession.return_value.query
+    filter_call = query_call.return_value.filter_by
+    commit_call = MockSession.return_value.commit
+    delete_call = MockSession.return_value.delete
 
     model = BaseModel()
 
-    filterCall.return_value.one.return_value = model
+    filter_call.return_value.one.return_value = model
     mock_as_json.return_value = mock_address_request_data
 
     result = BaseModel().delete(id=123)
 
-    queryCall.assert_called_with(BaseModel)
-    filterCall.assert_called_with(id=123)
-    deleteCall.assert_called_with(model)
-    commitCall.assert_called()
+    query_call.assert_called_with(BaseModel)
+    filter_call.assert_called_with(id=123)
+    delete_call.assert_called_with(model)
+    commit_call.assert_called()
     assert result == mock_address_request_data
 
 def test_as_json():
