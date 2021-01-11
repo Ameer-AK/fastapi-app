@@ -1,12 +1,12 @@
 import os
 import sys
 
+sys.path.append(os.path.join(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))), 'src'))
+    
 import pytest
 from fastapi.testclient import TestClient
 from main import app
-
-sys.path.append(os.path.join(os.path.dirname(
-    os.path.dirname(os.path.abspath(__file__))), 'src'))
 
 
 @pytest.fixture(scope='module')
