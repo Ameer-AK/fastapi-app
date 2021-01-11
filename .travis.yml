@@ -13,7 +13,7 @@ jobs:
     - stage: build_and_test
       name: "Build"
       install: bin/build_base.sh
-      script: cd src && uvicorn main:app --host 0.0.0.0 --reload
+      # script: cd src && uvicorn main:app --host 0.0.0.0 --reload
       
     - stage: build_and_test
       name: "Build and run test"
