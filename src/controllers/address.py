@@ -17,12 +17,12 @@ router = APIRouter(
 
 
 @router.get("/", response_model=List[AddressOut], status_code=status.HTTP_200_OK)
-def getAdresses(addressIn: AddressInQuery = Depends()):
-    return Address().getAll(**addressIn.dict())
+def get(addressIn: AddressInQuery = Depends()):
+    return Address().get_all(**addressIn.dict())
 
 
 @router.get("/{address_id}", response_model=AddressOut, status_code=status.HTTP_200_OK)
-def getAddress(address_id: UUID):
+def get_address(address_id: UUID):
     try:
         return Address().get(id=address_id)
     except NoResultFound:
@@ -30,13 +30,13 @@ def getAddress(address_id: UUID):
 
 
 @router.post("/", response_model=AddressOut, status_code=status.HTTP_201_CREATED)
-def addAddress(addressIn: AddressIn):
+def add_address(addressIn: AddressIn):
     
     return Address().insert(**addressIn.dict())
 
 
 @router.patch("/{address_id}", response_model=AddressOut, status_code=status.HTTP_200_OK)
-def updateAddress(address_id: UUID, addressIn: AddressInPatch):
+def update_address(address_id: UUID, addressIn: AddressInPatch):
     try:
         return Address().update(address_id, **addressIn.dict(exclude_unset=True))
     except NoResultFound:
@@ -44,7 +44,7 @@ def updateAddress(address_id: UUID, addressIn: AddressInPatch):
     
 
 @router.delete("/{address_id}", response_model=AddressOut, status_code=status.HTTP_200_OK)
-def deleteAddress(address_id: UUID):
+def delete_address(address_id: UUID):
     try:
         return Address().delete(address_id)
     except NoResultFound:

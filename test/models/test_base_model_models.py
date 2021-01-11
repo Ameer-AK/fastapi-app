@@ -4,14 +4,14 @@ from models.base_model import BaseModel
 
 @patch('models.base_model.BaseModel.as_json')
 @patch('models.base_model.Session')
-def test_getAll(mockSession, mock_as_json, mock_address_request_data):
-    queryCall = mockSession.return_value.query
+def test_get_all(MockSession, mock_as_json, mock_address_request_data):
+    queryCall = MockSession.return_value.query
     filterCall = queryCall.return_value.filter_by
 
     filterCall.return_value.all.return_value = [BaseModel()]
     mock_as_json.return_value = mock_address_request_data
 
-    result = BaseModel().getAll(**mock_address_request_data)
+    result = BaseModel().get_all(**mock_address_request_data)
 
     queryCall.assert_called_with(BaseModel)
     filterCall.assert_called_with(**mock_address_request_data)
@@ -20,8 +20,8 @@ def test_getAll(mockSession, mock_as_json, mock_address_request_data):
 
 @patch('models.base_model.BaseModel.as_json')
 @patch('models.base_model.Session')
-def test_get(mockSession, mock_as_json, mock_address_request_data):
-    queryCall = mockSession.return_value.query
+def test_get(MockSession, mock_as_json, mock_address_request_data):
+    queryCall = MockSession.return_value.query
     filterCall = queryCall.return_value.filter_by
 
     filterCall.return_value.one.return_value = BaseModel()
@@ -36,9 +36,9 @@ def test_get(mockSession, mock_as_json, mock_address_request_data):
 
 @patch('models.base_model.BaseModel.as_json')
 @patch('models.base_model.Session')
-def test_insert(mockSession, mock_as_json, mock_address_request_data):
-    addCall = mockSession.return_value.add
-    commitCall = mockSession.return_value.commit
+def test_insert(MockSession, mock_as_json, mock_address_request_data):
+    addCall = MockSession.return_value.add
+    commitCall = MockSession.return_value.commit
     
     mock_as_json.return_value = mock_address_request_data
 
@@ -51,10 +51,10 @@ def test_insert(mockSession, mock_as_json, mock_address_request_data):
 
 @patch('models.base_model.BaseModel.as_json')
 @patch('models.base_model.Session')
-def test_update(mockSession, mock_as_json, mock_address_request_data):
-    queryCall = mockSession.return_value.query
+def test_update(MockSession, mock_as_json, mock_address_request_data):
+    queryCall = MockSession.return_value.query
     filterCall = queryCall.return_value.filter_by
-    commitCall = mockSession.return_value.commit
+    commitCall = MockSession.return_value.commit
 
     filterCall.return_value.one.return_value = BaseModel()
     mock_as_json.return_value = mock_address_request_data
@@ -69,11 +69,11 @@ def test_update(mockSession, mock_as_json, mock_address_request_data):
 
 @patch('models.base_model.BaseModel.as_json')
 @patch('models.base_model.Session')
-def test_delete(mockSession, mock_as_json, mock_address_request_data):
-    queryCall = mockSession.return_value.query
+def test_delete(MockSession, mock_as_json, mock_address_request_data):
+    queryCall = MockSession.return_value.query
     filterCall = queryCall.return_value.filter_by
-    commitCall = mockSession.return_value.commit
-    deleteCall = mockSession.return_value.delete
+    commitCall = MockSession.return_value.commit
+    deleteCall = MockSession.return_value.delete
 
     model = BaseModel()
 

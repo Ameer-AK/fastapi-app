@@ -47,7 +47,7 @@ def root():
 
 
 @app.get("/customers", response_model=List[CustomerOut])
-def getCustomers():
+def get_customers():
     customers =  select([customer]).execute().fetchall()
     result = []
     for c in customers:
@@ -60,7 +60,7 @@ def getCustomers():
 
 
 @app.get("/customers/{customer_id}", response_model=CustomerOut)
-def getCustomer(customer_id: UUID):
+def get_customer(customer_id: UUID):
     query = jsonable_encoder(select([customer])\
         .where(customer.c.id==customer_id)\
         .execute().first())
@@ -77,7 +77,7 @@ def getCustomer(customer_id: UUID):
 
 
 @app.post("/customers", response_model=CustomerOut)
-def addCustomer(customerIn: CustomerIn):
+def add_customer(customerIn: CustomerIn):
     newCustomer = DBCustomer(**customerIn.dict(), id=uuid4())
     customer.insert().values(**newCustomer.dict()).execute()
 
@@ -85,7 +85,7 @@ def addCustomer(customerIn: CustomerIn):
 
 
 @app.patch("/customers/{customer_id}", response_model=CustomerOut)
-def updateCustomer(customer_id: UUID, customerIn: CustomerIn):
+def update_customer(customer_id: UUID, customerIn: CustomerIn):
     currentCustomer = jsonable_encoder(customer.select().where(customer.c.id==customer_id).execute().first())
 
     if not currentCustomer:
@@ -110,7 +110,7 @@ def updateCustomer(customer_id: UUID, customerIn: CustomerIn):
 
 
 @app.delete("/customers/{customer_id}", response_model=DBCustomer)
-def deleteCustomer(customer_id: UUID):
+def delete_customer(customer_id: UUID):
     currentCustomer = customer.select().where(customer.c.id==customer_id).execute().first()
     
     if not currentCustomer:
@@ -124,14 +124,14 @@ def deleteCustomer(customer_id: UUID):
 
 
 @app.post("/addresses", response_model=AddressOut)
-def addAddress(addressIn: AddressIn):
+def add_address(addressIn: AddressIn):
     newAddress = DBAddress(**addressIn.dict(), id=uuid4())
     address.insert().values(**newAddress.dict()).execute()
     return newAddress
 
 
 @app.patch("/adresses/{address_id}", response_model=AddressOut)
-def updateAddress(address_id: UUID, addressIn: AddressInPatch):
+def update_address(address_id: UUID, addressIn: AddressInPatch):
     currentAddress = jsonable_encoder(address.select().where(address.c.id==address_id).execute().first())
 
     if not currentAddress:
@@ -151,7 +151,7 @@ def updateAddress(address_id: UUID, addressIn: AddressInPatch):
 
 
 @app.delete("/addresses/{address_id}", response_model=AddressOut)
-def deleteAddress(address_id: UUID):
+def delete_address(address_id: UUID):
     currentAddress = address.select().where(address.c.id==address_id).execute().first()
     
     if not currentAddress:

@@ -17,11 +17,11 @@ router = APIRouter(
 )
 
 @router.get("/", response_model=List[CustomerOut], status_code=status.HTTP_200_OK)
-def getCustomers(customerIn: CustomerInQuery = Depends()):
-    return Customer().getAll(**customerIn.dict())
+def get_customers(customerIn: CustomerInQuery = Depends()):
+    return Customer().get_all(**customerIn.dict())
 
 @router.get("/{customer_id}", response_model=CustomerOut, status_code=status.HTTP_200_OK)
-def getCustomer(customer_id: UUID):
+def get_customer(customer_id: UUID):
     try:
         return Customer().get(id=customer_id)
     except NoResultFound:
@@ -29,13 +29,13 @@ def getCustomer(customer_id: UUID):
 
 
 @router.post("/", response_model=CustomerOut, status_code=status.HTTP_201_CREATED)
-def addCustomer(customerIn: CustomerIn):
+def add_customer(customerIn: CustomerIn):
 
     return Customer().insert(**customerIn.dict())
 
 
 @router.patch("/{customer_id}", response_model=CustomerOut, status_code=status.HTTP_200_OK)
-def updateCustomer(customer_id: UUID, customerIn: CustomerInPatch):
+def update_customer(customer_id: UUID, customerIn: CustomerInPatch):
     try:
         return Customer().update(customer_id, **customerIn.dict(exclude_unset=True))
     except NoResultFound:
@@ -43,7 +43,7 @@ def updateCustomer(customer_id: UUID, customerIn: CustomerInPatch):
     
 
 @router.delete("/{customer_id}", response_model=CustomerOut, status_code=status.HTTP_200_OK)
-def deleteCustomer(customer_id: UUID):
+def delete_customer(customer_id: UUID):
     try:
         return Customer().delete(customer_id)
     except NoResultFound:

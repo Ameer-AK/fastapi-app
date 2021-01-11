@@ -11,7 +11,7 @@ class BaseModel(Base):
         self.session = Session()
     
 
-    def getAll(self, **criteria):
+    def get_all(self, **criteria):
         return [obj.as_json() for obj in self.session.query(self.__class__).filter_by(**criteria).all()]
 
 
@@ -39,3 +39,7 @@ class BaseModel(Base):
         self.session.delete(obj)
         self.session.commit()
         return obj.as_json()
+
+    
+    def as_json(self):
+        raise Exception("Please override me")
