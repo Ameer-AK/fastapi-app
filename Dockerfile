@@ -7,9 +7,10 @@ ENV DB_PASSWORD $DB_PASSWORD
 ENV DB_HOSTNAME $DB_HOSTNAME
 ENV DB_PORT $DB_PORT
 ENV DB_NAME $DB_NAME
-ENV PYTHONPATH $PYTHONPATH:$(pwd)/app
 
 WORKDIR /app
+
+ENV PYTHONPATH $PYTHONPATH:$(pwd)
 
 RUN apk add --no-cache postgresql-libs bash && \
     apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev make

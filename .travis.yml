@@ -14,6 +14,7 @@ jobs:
       name: "Build"
       install: bin/build_base.sh
       # script: cd src && uvicorn main:app --host 0.0.0.0 --reload
+      script: echo "BUILT SUCCESSFULY"
       
     - stage: build_and_test
       name: "Build and run test"
