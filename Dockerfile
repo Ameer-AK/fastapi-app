@@ -10,14 +10,10 @@ ENV DB_NAME $DB_NAME
 
 WORKDIR /app
 
-RUN echo $(pwd)
-
-ENV PYTHONPATH $PYTHONPATH:pwd
+ENV PYTHONPATH $(pwd)
 
 RUN apk add --no-cache postgresql-libs bash && \
     apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev make
-
-RUN pwd
 
 COPY requirements.txt .
 
@@ -25,8 +21,6 @@ COPY test-requirements.txt .
 
 RUN pip install -r ${EXTRA_REQUIREMENTS:-requirements.txt}
 RUN apk --purge del .build-deps
-
-RUN pwd
 
 COPY . .
 
