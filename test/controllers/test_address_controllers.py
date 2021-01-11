@@ -1,7 +1,6 @@
-import pytest
 from unittest.mock import patch
 from uuid import UUID
-from pydantic import ValidationError
+
 from sqlalchemy.orm.exc import NoResultFound
 
 
@@ -24,11 +23,12 @@ def test_get_addresses_with_query(mock_get_all, mock_address_request_data, clien
     del request_data['customer_id']
 
     response = client.get('/addresses/?customer_id=47dd46aa-2668-4fe6-a8db-e6a47dd63cde'
-                '&street=street%20name'
-                '&city=city%20name'
-                '&country=country%20name')
+                          '&street=street%20name'
+                          '&city=city%20name'
+                          '&country=country%20name')
 
-    mock_get_all.assert_called_with(**request_data, customer_id=UUID(mock_address_request_data['customer_id']))
+    mock_get_all.assert_called_with(
+        **request_data, customer_id=UUID(mock_address_request_data['customer_id']))
     assert response.json() == [mock_address_request_data]
     assert response.status_code == 200
 
@@ -39,7 +39,8 @@ def test_get_address(mock_get, mock_address_request_data, client):
 
     response = client.get('/addresses/77e2c1f3-68f8-483b-bc30-fef0b1fe0d2a')
 
-    mock_get.assert_called_with(id=UUID("77e2c1f3-68f8-483b-bc30-fef0b1fe0d2a"))
+    mock_get.assert_called_with(
+        id=UUID("77e2c1f3-68f8-483b-bc30-fef0b1fe0d2a"))
     assert response.json() == mock_address_request_data
     assert response.status_code == 200
 
@@ -50,8 +51,10 @@ def test_get_address_non_existent(mock_get, mock_address_request_data, client):
 
     response = client.get('/addresses/77e2c1f3-68f8-483b-bc30-fef0b1fe0d2a')
 
-    mock_get.assert_called_with(id=UUID("77e2c1f3-68f8-483b-bc30-fef0b1fe0d2a"))
-    assert response.json() == {'detail': 'Address with id: 77e2c1f3-68f8-483b-bc30-fef0b1fe0d2a not found'}
+    mock_get.assert_called_with(
+        id=UUID("77e2c1f3-68f8-483b-bc30-fef0b1fe0d2a"))
+    assert response.json() == {
+        'detail': 'Address with id: 77e2c1f3-68f8-483b-bc30-fef0b1fe0d2a not found'}
     assert response.status_code == 404
 
 
@@ -78,9 +81,11 @@ def test_update_address(mock_update, mock_address_request_data, client):
     del request_data['id']
     del request_data['customer_id']
 
-    response = client.patch(f'/addresses/{mock_address_request_data["id"]}', json=request_data)
+    response = client.patch(
+        f'/addresses/{mock_address_request_data["id"]}', json=request_data)
 
-    mock_update.assert_called_with(UUID(mock_address_request_data['id']), **request_data)
+    mock_update.assert_called_with(
+        UUID(mock_address_request_data['id']), **request_data)
     assert response.json() == mock_address_request_data
     assert response.status_code == 200
 
@@ -89,10 +94,12 @@ def test_update_address(mock_update, mock_address_request_data, client):
 def test_update_address_non_existent(mock_update, mock_address_request_data, client):
     mock_update.side_effect = NoResultFound()
 
-    response = client.patch(f'/addresses/{mock_address_request_data["id"]}', json={})
+    response = client.patch(
+        f'/addresses/{mock_address_request_data["id"]}', json={})
 
     mock_update.assert_called_with(UUID(mock_address_request_data['id']))
-    assert response.json()['detail'] == f"Address with id: {mock_address_request_data['id']} not found"
+    assert response.json()[
+        'detail'] == f"Address with id: {mock_address_request_data['id']} not found"
     assert response.status_code == 404
 
 
@@ -114,5 +121,6 @@ def test_delete_address_non_existent(mock_delete, mock_address_request_data, cli
     response = client.delete(f"/addresses/{mock_address_request_data['id']}")
 
     mock_delete.assert_called_with(UUID(mock_address_request_data['id']))
-    assert response.json()['detail'] == f"Address with id: {mock_address_request_data['id']} not found"
+    assert response.json()[
+        'detail'] == f"Address with id: {mock_address_request_data['id']} not found"
     assert response.status_code == 404

@@ -1,7 +1,6 @@
-from typing import Dict, List, Optional
+from typing import List, Optional
 from uuid import UUID, uuid4
 
-from fastapi import Query
 from pydantic import BaseModel, Field
 
 

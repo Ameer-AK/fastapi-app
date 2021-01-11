@@ -2,7 +2,7 @@ import os
 import sys
 from os import environ
 from random import randint
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from models.pydanticmodels import DBAddress, DBCustomer
 from sqlalchemy import *

@@ -6,8 +6,6 @@ Create Date: 2020-12-27 12:30:05.719916
 
 """
 from alembic import op
-import sqlalchemy as sa
-
 
 # revision identifiers, used by Alembic.
 revision = '7ec9990ad854'
@@ -17,7 +15,9 @@ depends_on = None
 
 
 def upgrade():
-    op.create_foreign_key("fk_customer_address", "address", "customer", ["customer_id"], ["id"])
+    op.create_foreign_key("fk_customer_address", "address",
+                          "customer", ["customer_id"], ["id"])
+
 
 def downgrade():
     op.drop_constraint("fk_customer_address", "address")

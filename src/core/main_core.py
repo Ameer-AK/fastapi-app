@@ -1,19 +1,15 @@
-import json
 import re
 from datetime import datetime
 from typing import List
 from uuid import UUID, uuid4
 
 from coremetadata import address, audit, customer, engine
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
 from pydanticmodels import (AddressIn, AddressInPatch, AddressOut, CustomerIn,
                             CustomerOut, DBAddress, DBCustomer)
 from sqlalchemy import *
 from sqlalchemy import event
-from sqlalchemy.dialects import postgresql
 
 app = FastAPI()
 

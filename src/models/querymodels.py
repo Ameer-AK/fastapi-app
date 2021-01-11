@@ -1,9 +1,8 @@
 from dataclasses import dataclass
-from typing import Dict, List, Optional
+from typing import Optional
 from uuid import UUID
 
 from fastapi import Query
-from pydantic import StrictStr
 
 
 @dataclass

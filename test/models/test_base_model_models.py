@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 from models.base_model import BaseModel
 
 @patch('models.base_model.BaseModel.as_json')
