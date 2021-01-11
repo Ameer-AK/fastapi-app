@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from controllers import customer, address
+
+from controllers import address, customer
 
 app = FastAPI()
 

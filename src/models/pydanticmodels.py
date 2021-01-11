@@ -1,7 +1,9 @@
-from pydantic import BaseModel, Field
-from fastapi import Query
-from typing import Optional, Dict, List
+from typing import Dict, List, Optional
 from uuid import UUID, uuid4
+
+from fastapi import Query
+from pydantic import BaseModel, Field
+
 
 class AddressIn(BaseModel):
     customer_id: UUID
@@ -9,16 +11,19 @@ class AddressIn(BaseModel):
     city: str
     country: str
 
+
 class AddressInPatch(BaseModel):
     street: Optional[str] = None
     city: Optional[str] = None
     country: Optional[str] = None
+
 
 class AddressOutEmbedded(BaseModel):
     id: UUID
     street: Optional[str] = None
     city: str
     country: str
+
 
 class AddressOut(BaseModel):
     id: UUID
@@ -27,12 +32,14 @@ class AddressOut(BaseModel):
     city: str
     country: str
 
+
 class DBAddress(AddressOut):
     id: UUID = uuid4()
     customer_id: UUID
     street: Optional[str] = None
     city: str
     country: str
+
 
 class CustomerIn(BaseModel):
     first_name: str
@@ -43,6 +50,7 @@ class CustomerIn(BaseModel):
     height: float
     weight: float
 
+
 class CustomerInPatch(BaseModel):
     first_name: Optional[str] = None
     middle_name: Optional[str] = None
@@ -51,6 +59,7 @@ class CustomerInPatch(BaseModel):
     married: Optional[bool] = None
     height: Optional[float] = None
     weight: Optional[float] = None
+
 
 class DBCustomer(BaseModel):
     id: UUID = uuid4()
@@ -61,7 +70,8 @@ class DBCustomer(BaseModel):
     married: bool = False
     height: float
     weight: float
-    
+
+
 class CustomerOut(BaseModel):
     id: UUID
     first_name: str

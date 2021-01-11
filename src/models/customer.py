@@ -1,12 +1,13 @@
-from models.base_model import BaseModel
+from datetime import datetime
+from uuid import uuid4
 
-from sqlalchemy import (Column, Integer, String, CheckConstraint,
-Boolean, Float, DateTime, ForeignKey)
+from sqlalchemy import (Boolean, CheckConstraint, Column, DateTime, Float,
+                        ForeignKey, Integer, String)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from uuid import uuid4
-from datetime import datetime
+from models.base_model import BaseModel
+
 
 class Customer(BaseModel):
     __tablename__ = 'customer'
@@ -19,11 +20,12 @@ class Customer(BaseModel):
     married = Column(Boolean, default=False)
     height = Column(Float)
     weight = Column(Float)
-    last_updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+    last_updated = Column(DateTime, default=datetime.now,
+                          onupdate=datetime.now)
     created_at = Column(DateTime, default=datetime.now)
 
-    addresses = relationship("Address", back_populates="customer", cascade="all, delete, delete-orphan")
-
+    addresses = relationship(
+        "Address", back_populates="customer", cascade="all, delete, delete-orphan")
 
     def as_json(self):
         return {

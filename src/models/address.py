@@ -1,22 +1,24 @@
-from models.base_model import BaseModel
+from datetime import datetime
+from uuid import uuid4
 
-from sqlalchemy import Column, String, DateTime, ForeignKey
-    # Table, Enum, Time
+from sqlalchemy import Column, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from uuid import uuid4
-from datetime import datetime
+from models.base_model import BaseModel
+
 
 class Address(BaseModel):
     __tablename__ = 'address'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    customer_id = Column(UUID(as_uuid=True), ForeignKey("customer.id", onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    customer_id = Column(UUID(as_uuid=True), ForeignKey(
+        "customer.id", onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     street = Column(String(50))
     city = Column(String(50))
     country = Column(String(50))
-    last_updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+    last_updated = Column(DateTime, default=datetime.now,
+                          onupdate=datetime.now)
     created_at = Column(DateTime, default=datetime.now)
 
     customer = relationship("Customer", back_populates="addresses")
@@ -41,4 +43,3 @@ class Address(BaseModel):
 #     Column('operation', Enum("INSERT", "UPDATE", "DELETE", name="operation_enum")),
 #     Column('time', Time)
 # )
-

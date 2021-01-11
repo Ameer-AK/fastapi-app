@@ -8,6 +8,7 @@ db_password = environ.get('DB_PASSWORD')
 db_hostname = environ.get('DB_HOSTNAME')
 db_name = environ.get('DB_NAME')
 
-engine = create_engine(f'postgresql://{db_username}:{db_password}@{db_hostname}/{db_name}')
+engine = create_engine(
+    f'postgresql://{db_username}:{db_password}@{db_hostname}/{db_name}')
 
 Session = sessionmaker(bind=engine)

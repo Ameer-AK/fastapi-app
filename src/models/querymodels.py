@@ -1,13 +1,16 @@
 from dataclasses import dataclass
-from typing import Optional, Dict, List
-from fastapi import Query
+from typing import Dict, List, Optional
 from uuid import UUID
+
+from fastapi import Query
 from pydantic import StrictStr
+
 
 @dataclass
 class BaseQuery:
     def dict(self):
-        return {k:v for k, v in self.__dict__.items() if not v is None}
+        return {k: v for k, v in self.__dict__.items() if not v is None}
+
 
 @dataclass
 class CustomerInQuery(BaseQuery):
@@ -18,6 +21,7 @@ class CustomerInQuery(BaseQuery):
     married: Optional[bool] = None
     height: Optional[float] = None
     weight: Optional[float] = None
+
 
 @dataclass
 class AddressInQuery(BaseQuery):
