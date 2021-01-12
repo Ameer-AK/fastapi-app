@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-docker run fastapi-app-test -t /bin/bash -c "./bin/test.sh"
+docker run -t fastapi-app-test /bin/bash -c "./bin/test.sh"
