@@ -19,7 +19,7 @@ jobs:
     - stage: build_and_test
       name: "Build and run test"
       install: bin/build_test.sh
-      script: bin/test.sh
+      script: bin/test_ci.sh
 
     - stage: deploy
       name: "Deploy"
