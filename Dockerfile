@@ -20,6 +20,8 @@ COPY test-requirements.txt .
 RUN pip install -r ${EXTRA_REQUIREMENTS:-requirements.txt}
 RUN apk --purge del .build-deps
 
+RUN pwd
+
 COPY . .
 
 EXPOSE 8000
