@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-docker build -t fastapi-app --build-arg EXTRA_REQUIREMENTS=test-requirements.txt .
+docker build -t fastapi-app-test --build-arg EXTRA_REQUIREMENTS=test-requirements.txt .
 
-export PYTHONPATH=$PYTHONPATH:$(pwd)
+docker exec fastapi-app -t ./bin/test.sh
