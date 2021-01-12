@@ -10,7 +10,7 @@ ENV DB_NAME $DB_NAME
 
 WORKDIR /app
 
-ENV PYTHONPATH $(pwd)/src
+ENV PYTHONPATH $PYTHONPATH:$(pwd)/src
 
 RUN apk add --no-cache postgresql-libs bash && \
     apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev make
