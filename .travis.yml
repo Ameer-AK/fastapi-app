@@ -3,8 +3,6 @@ language: python
 python:
   - "3.8"
 
-cache: pip
-
 services:
   - docker
 
@@ -12,17 +10,15 @@ jobs:
   include:
     - stage: build_and_test
       name: "Build"
-      install: bin/build_base.sh
-      # script: cd src && uvicorn main:app --host 0.0.0.0 --reload
+      install: .travis/build_base.sh
       script: echo "BUILT SUCCESSFULY"
       
     - stage: build_and_test
       name: "Build and run test"
-      install: bin/build_test.sh
-      script: bin/test_ci.sh
+      install: .travis/build_test.sh
+      script: .travis/test_ci.sh
 
     - stage: deploy
       name: "Deploy"
       script: 
         - echo "NO DEPLOYEMENT YET"
-
