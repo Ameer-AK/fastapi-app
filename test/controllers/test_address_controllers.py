@@ -22,13 +22,11 @@ def test_get_addresses_with_query(mock_get_all, mock_address_request_data, clien
     del request_data['id']
     del request_data['customer_id']
 
-    response = client.get('/addresses/?customer_id=47dd46aa-2668-4fe6-a8db-e6a47dd63cde'
-                          '&street=street%20name'
+    response = client.get('/addresses/?street=street%20name'
                           '&city=city%20name'
                           '&country=country%20name')
 
-    mock_get_all.assert_called_with(
-        **request_data, customer_id=UUID(mock_address_request_data['customer_id']))
+    mock_get_all.assert_called_with(**request_data)
     assert response.json() == [mock_address_request_data]
     assert response.status_code == 200
 

@@ -4,7 +4,6 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from models.customer import Customer
 from models.pydanticmodels import CustomerIn, CustomerInPatch, CustomerOut
-from models.querymodels import CustomerInQuery
 from sqlalchemy.orm.exc import NoResultFound
 
 router = APIRouter(
@@ -14,7 +13,7 @@ router = APIRouter(
 
 
 @router.get("/", response_model=List[CustomerOut], status_code=status.HTTP_200_OK)
-def get_customers(customer_in: CustomerInQuery = Depends()):
+def get_customers(customer_in: CustomerInPatch = Depends()):
     return Customer().get_all(**customer_in.dict())
 
 
